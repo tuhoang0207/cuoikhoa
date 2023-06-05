@@ -71,8 +71,11 @@
                         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 top-account sm-width sm-width-33">
                             <div class="top-accounts">
                                 <ul>
-                                    <li><a href="./register.html"><span class="fa fa-user"></span>Register</a></li>
-                                    <li><a href="./login-4.html"><span class="fa fa-lock"></span>Login</a></li>
+                                    <li class="hidden-li"><a href="./register.html"><span
+                                                class="fa fa-user"></span>Register</a></li>
+                                    <li class="hidden-li"><a href="./login-4.html"><span
+                                                class="fa fa-lock"></span>Login</a></li>
+                                    <li id="logout-btn"><a href="#"><span class="fa fa-lock" ></span>Logout</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -1894,20 +1897,52 @@
             measurementId: "G-3LJXKFF2FD"
         };
 
-        firebase.initializeApp(firebaseConfig);
+        const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
         const auth = getAuth(app);
 
-        
-        
 
-    var firebaseRef = firebase.database().ref('schedule')
+        // const firebaseRef = firebase.database().ref(database, 'users');
 
-        document.querySelector("#buy-ticket-btn").addEventListener('click',() => {
-            let selectedFilm = document.querySelector("#list-film").value;
-            firebaseRef.push(selectedFilm);
-            debugger
+        var firebaseRef = ref(database, 'schedule')
+
+
+
+        document.querySelector("#buy-ticket-btn").addEventListener('click', (userId) => {
+            userId = localStorage.getItem('userId');
+            const db = getDatabase();
+            update(ref(db, 'users/' + userId), {
+                // email: localStorage.getItem('useremail'),
+                // userName: localStorage.getItem('username'),                
+                film: document.querySelector("#list-film").value
+            });
         })
+
+
+        //check session null
+        if (sessionStorage.getItem('userId') != null) {
+            let elems = document.querySelectorAll('.hidden-li');
+            let index = 0, length = elems.length;
+            for (; index < length; index++) {
+                elems[index].style.display = "none";
+            }
+            document.querySelector("#logout-btn").style.display = 'block';
+        } else {
+            let elems = document.querySelectorAll('.hidden-li');
+            let index = 0, length = elems.length;
+            for (; index < length; index++) {
+                elems[index].style.display = "inline";
+            }
+            document.querySelector("#logout-btn").style.display = 'none';
+        }
+
+        document.querySelector("#logout-btn").addEventListener('click', () => {
+            alert(1)
+            localStorage.removeItem('userId');
+            sessionStorage.removeItem('userId');
+            location.reload()
+        }
+        )
 
     </script>
 
@@ -1928,6 +1963,5 @@
 </body>
 
 
-<!-- Mirrored from tfhtml.themepul.com/moviestar/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 07 May 2023 12:43:51 GMT -->
 
 </html>

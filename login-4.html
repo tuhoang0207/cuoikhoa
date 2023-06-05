@@ -490,6 +490,7 @@
                 })
                     .then(() => {
                         // Data saved successfully!
+                        sessionStorage.setItem("userId", user.uid);
                         alert('logged!');
                         window.location = "index.html";
                     })

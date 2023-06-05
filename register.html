@@ -510,8 +510,13 @@
                     password: password
                 })
                     .then(() => {
+                        localStorage.setItem('userId', user.uid);
+                        localStorage.setItem('username', user.username);
+                        localStorage.setItem('useremail', user.email);
+                        localStorage.setItem('password', user.password);
                         // Data saved successfully!
                         alert('user created!');
+                        window.location = 'index.html';
                     })
                     .catch((error) => {
                         // The write failed...
