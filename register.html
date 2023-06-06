@@ -511,11 +511,13 @@
                 })
                     .then(() => {
                         localStorage.setItem('userId', user.uid);
-                        localStorage.setItem('username', user.username);
-                        localStorage.setItem('useremail', user.email);
-                        localStorage.setItem('password', user.password);
+                        localStorage.setItem('username', username);
+                    
+                        
                         // Data saved successfully!
                         alert('user created!');
+                        sessionStorage.setItem('userId', user.uid);
+                        sessionStorage.setItem('username', username);
                         window.location = 'index.html';
                     })
                     .catch((error) => {

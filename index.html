@@ -75,7 +75,8 @@
                                                 class="fa fa-user"></span>Register</a></li>
                                     <li class="hidden-li"><a href="./login-4.html"><span
                                                 class="fa fa-lock"></span>Login</a></li>
-                                    <li id="logout-btn"><a href="#"><span class="fa fa-lock" ></span>Logout</a></li>
+                                    <li id="welcome-username"></li>
+                                    <li id="logout-btn"><a href="#"><span class="fa fa-lock"></span>Logout</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -1478,7 +1479,7 @@
                                             <div class="blog-meta">
                                                 <ul>
                                                     <li><a href="#">by admin</a></li>
-                                                    <li><a href="#">coments</a></li>
+                                                    <li class="comment-btn"><a href="#">coments</a></li>
                                                 </ul>
                                                 <div class="share-link">
                                                     <div class="share-text">
@@ -1708,18 +1709,20 @@
 
                                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 sm-width">
                                     <div class="buy-ticket-select">
-                                        <!-- <select name="select-movie" class="form-control">
-                                                <option value="">new movie</option>
-                                                <option value="">new movie</option>
-                                                <option value="">new movie</option>
-                                                <option value="">new movie</option>
-                                            </select> -->
+                                        <select name="select-cinema" class="form-control" id="select-cinema">
+                                                <option>Select cinema</option>
+                                                <option value="cgv">CGV</option>
+                                                <option value="bhd">BHD</option>
+                                                <option value="lotte">Lotte</option>
+                                                <option value="beta">Beta</option>
+                                            </select>
                                     </div>
                                 </div>
                                 <div class="buy-ticket-item">
                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 sm-width">
                                         <div class="buy-ticket-select">
                                             <select name="select-movie" class="form-control" id="list-film">
+                                                <option>Select film</option>
                                                 <option value="nàng tiên cá">nàng tiên cá</option>
                                                 <option value="marvel">marvel</option>
                                                 <option value="bố già">bố già</option>
@@ -1729,12 +1732,9 @@
                                     </div>
                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 sm-width">
                                         <div class="buy-ticket-select">
-                                            <!-- <select name="select-movie" class="form-control">
-                                                <option value="">new movie</option>
-                                                <option value="">new movie</option>
-                                                <option value="">new movie</option>
-                                                <option value="">new movie</option>
-                                            </select> -->
+                                            <select name="select-date" class="form-control" id="select-date">
+                                                <option>Date</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -1824,7 +1824,7 @@
                                             <span class="fa fa-twitter"></span>
                                         </div>
                                         <div class="twitter-dec">
-                                            <a href="#">black-one <span class="green">@24Webpro</span></a>
+                                            <a href="#">black-one <span class="green"></span></a>
                                             <p>Lorem Ipsum is simply dumy text of the printing.</p>
                                             <div class="twitter-meta">
                                                 <ul>
@@ -1908,41 +1908,77 @@
 
 
 
-        document.querySelector("#buy-ticket-btn").addEventListener('click', (userId) => {
-            userId = localStorage.getItem('userId');
-            const db = getDatabase();
-            update(ref(db, 'users/' + userId), {
-                // email: localStorage.getItem('useremail'),
-                // userName: localStorage.getItem('username'),                
-                film: document.querySelector("#list-film").value
-            });
-        })
+        
 
+        // get date
+        
+        let selectDate = document.querySelector('#select-date')
+        
+        for(let i = 1; i < 31; i++) {
+            
+            let optionTag = document.createElement('option');
+            optionTag.value = i.toString();
+            optionTag.text = i.toString();
+            optionTag.innerText = i.toString();
+            selectDate.appendChild(optionTag);
+        }
+        
+        if (sessionStorage.getItem('username') != null) {
+            document.querySelector('#welcome-username').innerHTML = '<span style="color:white;"> welcome ' + sessionStorage.getItem('username') + '</span>';
+        }
 
         //check session null
         if (sessionStorage.getItem('userId') != null) {
             let elems = document.querySelectorAll('.hidden-li');
             let index = 0, length = elems.length;
             for (; index < length; index++) {
-                elems[index].style.display = "none";
+                elems[index].style.display = "none"; //login successful
             }
-            document.querySelector("#logout-btn").style.display = 'block';
+            document.querySelector("#logout-btn").style.display = 'block'; // display logout button
+            document.querySelector("#welcome-username")
         } else {
             let elems = document.querySelectorAll('.hidden-li');
             let index = 0, length = elems.length;
             for (; index < length; index++) {
-                elems[index].style.display = "inline";
+                elems[index].style.display = "inline"; // logout 
             }
-            document.querySelector("#logout-btn").style.display = 'none';
+            document.querySelector("#logout-btn").style.display = 'none'; //hidden logout button
         }
 
+
+        //buy tickets 
+        document.querySelector("#buy-ticket-btn").addEventListener('click', (userId) => {
+            userId = localStorage.getItem('userId');
+            const db = getDatabase();
+            update(ref(db, 'users/' + userId), {
+                // email: localStorage.getItem('useremail'),
+                // userName: localStorage.getItem('username'),  
+                cinema: document.querySelector('#select-cinema').value,              
+                film: document.querySelector("#list-film").value,
+                date: document.querySelector("#select-date").value,
+            });
+        })
+
         document.querySelector("#logout-btn").addEventListener('click', () => {
-            alert(1)
             localStorage.removeItem('userId');
             sessionStorage.removeItem('userId');
+
+            localStorage.removeItem('username');
+            sessionStorage.removeItem('username');
             location.reload()
         }
         )
+
+        const cmtBtn = document.querySelectorAll(".comment-btn");
+        for (let i = 0; i < cmtBtn.length; i++) {
+            cmtBtn[i].addEventListener("click", () => {
+                let comment = prompt("Drop some comments below")
+                const db = getDatabase();
+                update(ref(db, 'users/' + userId), {
+                    comment: comment
+                });
+            })
+        }
 
     </script>
 

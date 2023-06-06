@@ -490,7 +490,11 @@
                 })
                     .then(() => {
                         // Data saved successfully!
+                        let username = localStorage.getItem('username');
+
                         sessionStorage.setItem("userId", user.uid);
+                        sessionStorage.setItem("username", username);
+
                         alert('logged!');
                         window.location = "index.html";
                     })
